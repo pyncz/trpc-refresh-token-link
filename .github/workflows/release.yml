@@ -1,0 +1,153 @@
+name: Release npm package
+
+on:
+  push:
+    branches:
+      - some-branch # Your release branch
+
+jobs:
+  notify_start:
+    name: Notify about start releasing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🚀 Starting workflow for ${{ github.repository }}...
+
+  check:
+    name: Check if the new release is needed
+    runs-on: ubuntu-latest
+    outputs:
+      will-publish: ${{ steps.version.outputs.new-release-published }}
+      new-version: ${{ steps.version.outputs.release-version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check new version
+        id: version
+        uses: codfish/semantic-release-action@v2
+        with:
+          dry_run: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Log new version
+        if: ${{ steps.version.outputs.new-release-published == 'true' }}
+        run: echo "🚀 New version ${{ steps.version.outputs.release-version }} is about to get published..."
+
+      - name: Log skipping of new version
+        if: ${{ steps.version.outputs.new-release-published == 'false' }}
+        run: echo "🌚 Release not needed."
+
+  build:
+    if: ${{ needs.check.outputs.will-publish == 'true' }}
+    name: Build and publish
+    runs-on: ubuntu-latest
+    needs:
+      - check
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.9.3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install deps
+        run: |
+          pnpm i --frozen-lockfile
+        env:
+          CI: true
+
+      - name: Test
+        run: |
+          pnpm run test
+
+      - name: Build artifacts
+        run: |
+          pnpm run build
+
+      - name: Semantic release
+        uses: codfish/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  notify_failure:
+    if: ${{ failure() }}
+    name: Notify about workflow failed
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🚨 Workflow failed!
+
+  notify_cancelled:
+    if: ${{ cancelled() }}
+    name: Notify about workflow cancelled
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ✋ Workflow cancelled.
+
+  notify_result_skipped:
+    if: ${{ needs.check.outputs.will-publish == 'false' }}
+    name: Notify about skipping
+    runs-on: ubuntu-latest
+    needs:
+      - notify_start
+      - check
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🌚 Ended without a new release for ${{ github.repository }}
+
+  notify_result_published:
+    if: ${{ needs.check.outputs.will-publish == 'true' }}
+    name: Notify about publishing
+    runs-on: ubuntu-latest
+    needs:
+      - notify_start
+      - check
+      - build
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ✨ Release for ${{ github.repository }}@${{ needs.check.outputs.new-version }} has been created!

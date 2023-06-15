@@ -1,0 +1,42 @@
+{
+  "root":true,
+  "env":{
+    "node":true
+  },
+  "extends":[
+    "@antfu/eslint-config"
+  ],
+  "plugins":[],
+  "rules":{
+    "@typescript-eslint/array-type":[
+      "error",
+      {
+        "default":"array"
+      }
+    ],
+    "comma-dangle":"off",
+    "camelcase":"off",
+    "import/named":"off",
+    "no-useless-constructor":"off",
+    "no-control-regex":"off",
+    "no-console":"warn",
+    "arrow-parens":["error", "always"],
+    "brace-style":[
+      "error",
+      "1tbs"
+    ],
+    "@typescript-eslint/brace-style": 0,
+    "curly":[
+      "error",
+      "all"
+    ],
+    "space-before-function-paren":[
+      "error",
+      {
+        "anonymous":"never",
+        "named":"never",
+        "asyncArrow":"always"
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+      - stage
+      - release/*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.9.3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install deps
+        run: |
+          pnpm i --frozen-lockfile
+        env:
+          CI: true
+
+      - name: Test
+        run: |
+          pnpm run test

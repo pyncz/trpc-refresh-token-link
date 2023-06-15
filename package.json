@@ -1,0 +1,60 @@
+{
+  "name": "@pyncz/template.ts-lib",
+  "description": "A template for creating TypeScript NPM packages",
+  "version": "0.0.0-development",
+  "license": "MIT",
+  "type": "module",
+  "author": "Pavel Yankovski <https://github.com/pyncz>",
+  "keywords": [
+    "typescript"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "lint": "eslint .",
+    "lintfix": "nr lint --fix",
+    "test": "vitest run"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.26.2",
+    "@antfu/ni": "^0.17.2",
+    "eslint": "^8.23.0",
+    "lint-staged": ">=10",
+    "simple-git": "^3.17.0",
+    "simple-git-hooks": "^2.8.1",
+    "typescript": "^4.8.4",
+    "unbuild": "^0.7.4",
+    "vitest": "^0.24.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pyncz/template.ts-lib"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
+  "simple-git-hooks": {
+    "pre-commit": "nr lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,vue}": [
+      "eslint --fix"
+    ]
+  }
+}
