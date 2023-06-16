@@ -1,23 +1,27 @@
 {
-  "name": "@pyncz/template.ts-lib",
-  "description": "A template for creating TypeScript NPM packages",
-  "version": "0.0.0-development",
+  "name": "@pyncz/trpc-refresh-token-link",
+  "description": "🔃 Refresh token link for tRPC client",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
-  "author": "Pavel Yankovski <https://github.com/pyncz>",
+  "author": "Pau Yankovski <https://github.com/pyncz>",
   "keywords": [
+    "trpc",
+    "utils",
+    "helpers",
+    "jwt",
     "typescript"
   ],
   "scripts": {
     "build": "unbuild",
     "lint": "eslint .",
-    "lintfix": "nr lint --fix",
-    "test": "vitest run"
+    "lintfix": "nr lint --fix"
   },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
@@ -25,7 +29,10 @@
   ],
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "@trpc/client": "^10.30.0",
+    "@trpc/server": "^10.30.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.2",
     "@antfu/ni": "^0.17.2",
@@ -34,12 +41,11 @@
     "simple-git": "^3.17.0",
     "simple-git-hooks": "^2.8.1",
     "typescript": "^4.8.4",
-    "unbuild": "^0.7.4",
-    "vitest": "^0.24.5"
+    "unbuild": "^0.7.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pyncz/template.ts-lib"
+    "url": "https://github.com/pyncz/trpc-refresh-token-link"
   },
   "publishConfig": {
     "access": "public"

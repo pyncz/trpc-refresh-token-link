@@ -3,7 +3,7 @@ name: Release npm package
 on:
   push:
     branches:
-      - some-branch # Your release branch
+      - main
 
 jobs:
   notify_start:
