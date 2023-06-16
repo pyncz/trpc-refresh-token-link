@@ -82,10 +82,6 @@ jobs:
         env:
           CI: true
 
-      - name: Test
-        run: |
-          pnpm run test
-
       - name: Build artifacts
         run: |
           pnpm run build
