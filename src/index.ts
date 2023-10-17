@@ -4,7 +4,7 @@ import type { Unsubscribable } from '@trpc/server/observable'
 import { observable } from '@trpc/server/observable'
 import type { RefreshTokenLinkOptions } from './models'
 
-export const refreshTokenLink = (opts: RefreshTokenLinkOptions): TRPCLink<AnyRouter> => {
+export const refreshTokenLink = <TRouter extends AnyRouter = AnyRouter>(opts: RefreshTokenLinkOptions): TRPCLink<TRouter> => {
   const {
     getRefreshToken,
     fetchJwtPairByRefreshToken,
