@@ -5,7 +5,7 @@ export interface RefreshTokenLinkOptions {
    * Get locally stored refresh token
    * @returns Refresh token string or undefined
    */
-  getRefreshToken: () => string | undefined
+  getRefreshToken: () => Promise<string | undefined> | string | undefined
 
   /**
    * Fetch a new JWT pair by refresh token from your API
