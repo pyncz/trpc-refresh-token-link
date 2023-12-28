@@ -33,7 +33,8 @@ export const refreshTokenLink = <TRouter extends AnyRouter = AnyRouter>(opts: Re
                 onUnauthorized?.()
 
                 // Try to get a new jwt pair if the refresh token is stored
-                const refreshToken = getRefreshToken()
+                const refreshToken = await getRefreshToken()
+
                 if (refreshToken) {
                   refreshState.promise = (async () => {
                     try {
